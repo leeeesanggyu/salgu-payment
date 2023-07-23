@@ -1,11 +1,11 @@
-package com.salgu.salgupayment.util.response;
+package com.salgu.salgupayment.payment.responsecode;
 
+import com.salgu.salgupayment.util.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum ResponseCodeEnum implements ResponseCode {
-    SUCCESS(0,"success"),
-    FAILED(-1,"failed"),
+public enum PaymentResponseCodeEnum implements ResponseCode {
+    PRODUCT_ERROR(-1, "상품 가져오던 중 오류"),
     ;
 
     private final int code;

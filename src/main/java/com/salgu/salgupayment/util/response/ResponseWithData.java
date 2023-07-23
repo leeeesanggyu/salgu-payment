@@ -28,12 +28,12 @@ public class ResponseWithData {
     }
 
     //failed
-    public static ResponseWithData failed(ResponseCodeEnum responseCodeEnum) {
+    public static ResponseWithData failed(ResponseCode responseCodeEnum) {
         return process(responseCodeEnum, null);
     }
 
     //return 처리
-    public static ResponseWithData process(ResponseCodeEnum responseCodeEnum, Object data) {
+    public static ResponseWithData process(ResponseCode responseCodeEnum, Object data) {
         return ResponseWithData.builder()
                 .response(ResponseBuilder.builder()
                         .output(responseCodeEnum.getCode())
