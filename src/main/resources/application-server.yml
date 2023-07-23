@@ -1,0 +1,19 @@
+# common
+
+--- # local properties
+spring:
+  config:
+    activate:
+      on-profile: local
+
+server:
+  port: 18087
+
+--- # dev properties
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+server:
+  port: 18080

@@ -1,0 +1,19 @@
+# common
+
+--- # local properties
+spring:
+  config:
+    activate:
+      on-profile: local
+
+service:
+  api: ${API_URL:localhost:18089}
+
+--- # dev properties
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+service:
+  api: ${API_URL:localhost:18089}

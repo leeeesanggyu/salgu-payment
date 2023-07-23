@@ -1,0 +1,5 @@
+2023-07-24 02:52:17.332 [34mINFO [0;39m [35m990 [0;39m --- [main] [, ] [36mo.s.b.w.e.t.TomcatWebServer[0;39m : Tomcat initialized with port(s): 18087 (http)
+2023-07-24 02:52:17.413 [34mINFO [0;39m [35m1071[0;39m --- [main] [, ] [36mo.s.b.w.s.c.ServletWebServerApplicationContext[0;39m : Root WebApplicationContext: initialization completed in 565 ms
+2023-07-24 02:52:17.597 [34mINFO [0;39m [35m1255[0;39m --- [main] [, ] [36mo.s.b.w.e.t.TomcatWebServer[0;39m : Tomcat started on port(s): 18087 (http) with context path ''
+2023-07-24 02:53:09.858 [34mINFO [0;39m [35m53516[0;39m --- [http-nio-18087-exec-1] [, ] [36mo.s.w.s.DispatcherServlet[0;39m : Initializing Servlet 'dispatcherServlet'
+2023-07-24 02:53:09.861 [34mINFO [0;39m [35m53519[0;39m --- [http-nio-18087-exec-1] [, ] [36mo.s.w.s.DispatcherServlet[0;39m : Completed initialization in 3 ms

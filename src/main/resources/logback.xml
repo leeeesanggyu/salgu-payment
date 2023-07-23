@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <property name="LOG_DIR" value="./logs"/>
+    <property name="LOG_PATH_NAME" value="${LOG_DIR}/data/"/>
+    <property name="ERROR_LOG_PATH_NAME" value="${LOG_DIR}/error/"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern> %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta(%-4relative) --- [%thread{10}] [%X{traceId}, %X{spanId}] %cyan(%logger{20}) : %msg%n </pattern>
+        </encoder>
+    </appender>
+    <!--    file log setting-->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 일자별로 로그파일 적용하기 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH_NAME}data_%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>365</maxHistory> <!-- 일자별 백업파일의 보관기간 -->
+        </rollingPolicy>
+        <encoder>
+            <pattern> %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta(%-4relative) --- [%thread{10}] [%X{traceId}, %X{spanId}] %cyan(%logger{20}) : %msg%n </pattern>
+        </encoder>
+    </appender>
+    <appender name="Error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"> <!-- .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축 -->
+            <fileNamePattern>${ERROR_LOG_PATH_NAME}error_%d{yyyyMMdd}.log</fileNamePattern>
+            <maxHistory>365</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - [%marker] %msg%n</pattern>
+        </encoder> <!-- Rolling 정책 -->
+    </appender>
+    <logger name="com.salgu.salguauth" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="file"/>
+        <appender-ref ref="Error"/>
+    </logger>
+    <logger name="jdbc" level="OFF"/>
+    <logger name="jdbc.sqlonly" level="OFF"/>
+    <logger name="jdbc.sqltiming" level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="file"/>
+        <appender-ref ref="Error"/>
+    </logger>
+    <logger name="jdbc.audit" level="OFF"/>
+    <logger name="jdbc.resultset" level="OFF"/>
+    <logger name="jdbc.resultsettable" level="OFF">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="jdbc.connection" level="OFF"/>
+    <logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="file"/>
+        <appender-ref ref="Error"/>
+    </logger>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

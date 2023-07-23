@@ -2,14 +2,15 @@ package com.salgu.salgupayment.util;
 
 import com.google.common.base.Joiner;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -17,27 +18,20 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//@Component
-//@Aspect
+@Slf4j
+@Component
+@Aspect
 public class AopLogger {
-    private static final Logger logger = LoggerFactory.getLogger(AopLogger.class);
 
-    private String paramMapToString(Map<String, String[]> paramMap) {
-        return paramMap.entrySet().stream()
-                .map(entry -> String.format("%s -> (%s)",
-                        entry.getKey(), Joiner.on(",").join(entry.getValue())))
-                .collect(Collectors.joining(", "));
-    }
-
-    @Pointcut("within(com.humanreview.*..*)") // 3
+    @Pointcut("within(com.salgu.salgupayment.*.controller..*)") // 3
     public void onRequest() {
     }
 
-    @Pointcut("within(com.humanreview.util.exception.GlobalExceptionHandler)") // 3
+    @Pointcut("within(com.salgu.salgupayment.util.exception.GlobalExceptionHandler)") // 3
     public void onErrorRequest() {
     }
 
-    @Around("com.humanreview.util.AopLogger.onRequest() || com.humanreview.util.AopLogger.onErrorRequest()") // 4
+    @Around("com.salgu.salgupayment.util.AopLogger.onRequest() || com.salgu.salgupayment.util.AopLogger.onErrorRequest()") // 4
     public Object doLogging(ProceedingJoinPoint pjp) throws Throwable {
         HttpServletRequest request = // 5
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -50,7 +44,7 @@ public class AopLogger {
                 params = getParams(request).toString().length() > 0 ? " [" + getParams(request).toString() + "]" : "";
             }
         } catch (JSONException | NullPointerException e) {
-            e.printStackTrace();
+            log.error("", e);
         }
 
 
@@ -61,11 +55,18 @@ public class AopLogger {
         }finally {
             long end = System.currentTimeMillis();
             // webhooks 로깅 제외
-            if (!request.getRequestURI().startsWith("/api/overseas/zinc/webhook/")) {
-                logger.info("Request: {} {}{} < {} ({}ms)  {}", request.getMethod(), request.getRequestURI(),
-                        params, HttpRequestUtils.getRemoteAddress(request), end - start,userAgent);
-            }
+            String clientIp = request.getHeader("X-Forwarded-For") != null ? request.getHeader("X-Forwarded-For") : request.getRemoteAddr();
+            String requestIdFromGateway = request.getHeader("Trace-ID") != null ? request.getHeader("Trace-ID") : null;
+            log.info("Request: {} {}{} < {} / {} ({}ms) {} {}", request.getMethod(), request.getRequestURI(),
+                    params, request.getRemoteHost(), clientIp, end - start, requestIdFromGateway, userAgent);
         }
+    }
+
+    private String paramMapToString(Map<String, String[]> paramMap) {
+        return paramMap.entrySet().stream()
+                .map(entry -> String.format("%s -> (%s)",
+                        entry.getKey(), Joiner.on(",").join(entry.getValue())))
+                .collect(Collectors.joining(", "));
     }
 
     private static JSONObject getParams(HttpServletRequest request) throws JSONException {
